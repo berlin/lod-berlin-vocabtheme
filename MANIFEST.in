@@ -1,0 +1,4 @@
+include berlin/lod/vocabtheme/templates/*.html.jinja
+include berlin/lod/vocabtheme/assets/*.css
+include berlin/lod/vocabtheme/assets/*.js
+include berlin/lod/vocabtheme/config/*.yml
