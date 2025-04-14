@@ -1,0 +1,102 @@
+{% extends 'berlin.lod.basetheme/base.html.jinja' %}
+{% import 'berlin.lod.vocabtheme/voc_helper.html.jinja' as voc_helper with context %}
+
+{% set type_icon = type_icon | default('diagram-3') %} 
+
+{% block breadcrumbs %}
+  <div class="row breadcrumbs">
+    <div class="col-12">
+      <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            {% if resource_prefix != node.toPython() %}
+              <li class="breadcrumb-item">
+                  <a href="{{ resource_prefix | relative_uri }}">
+                  {{ dataset_breadcrumb }}
+                  </a>
+              </li>
+            {% endif %}
+            <li class="breadcrumb-item">
+                {{ title }}
+            </li>
+          </ol>
+      </nav>
+    </div>
+  </div>
+{% endblock breadcrumbs %}
+
+{% block content%}
+
+  {{ super() }}
+
+  <div class="row">
+
+  {% block class_list %}
+    {% set classes_query = '''
+      SELECT ?class
+      WHERE {
+        ?class rdfs:isDefinedBy ?resource_uri .
+        { ?class a owl:Class . } UNION
+        { ?class a rdfs:Class . }
+      } ORDER BY ?class
+    '''%}
+    {% set results = node | sparql_query(classes_query) %}
+    {% if results %}
+        <div class="col-lg-4">
+          <h2>Klassen</h2>
+          {{ voc_helper.term_list(results, 'class', title_languages=['de'])}}
+        </div>
+    {% endif %}
+  {% endblock class_list%}
+
+  {% block property_list %}
+    {% set properties_query = '''
+      SELECT ?property
+      WHERE {
+          ?property rdfs:isDefinedBy ?resource_uri .
+          { ?property a rdf:Property . } UNION
+          { ?property a owl:ObjectProperty . } UNION
+          { ?property a owl:AnnotationProperty . } UNION
+          { ?property a owl:DatatypeProperty . }
+      } ORDER BY ?property
+    '''
+    %}
+    {% set results = node | sparql_query(properties_query) %}
+    {% if results %}
+        <div class="col-lg-4">
+          <h2>Properties</h2>
+          {{ voc_helper.term_list(results, 'property', title_languages=['de'])}}
+        </div>
+    {% endif %}
+  {% endblock property_list %}
+
+  {% block other_list %}
+    {% set other_query = '''
+      SELECT ?term ?type
+      WHERE {
+        ?term 
+          a ?type ;
+          rdfs:isDefinedBy ?resource_uri .
+        # the filtering will not work if a term has multiple types,
+        # one of which is not in the list of filtered types
+        FILTER(!sameTerm(?type, owl:Class))
+        FILTER(!sameTerm(?type, rdfs:Class))
+        FILTER(!sameTerm(?type, rdf:Property))
+        FILTER(!sameTerm(?type, owl:ObjectProperty))
+        FILTER(!sameTerm(?type, owl:DatatypeProperty))
+        FILTER(!sameTerm(?type, owl:AnnotationProperty))
+      } ORDER BY ?type ?term
+    '''
+    %}
+    {% set results = node | sparql_query(other_query) %}
+    {% if results %}
+        <div class="col-lg-4">
+          <h2>Andere</h2>
+          {{ voc_helper.term_list(results, title_properties=[SCHEMA.name, SCHEMA.description], title_languages=['de'])}}
+        </div>
+    {% endif %}
+  {% endblock other_list %}
+
+  </div>
+
+{% endblock content %}
+

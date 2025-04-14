@@ -1,0 +1,18 @@
+{% import 'berlin.lod.basetheme/helper.html.jinja' as helper with context %}
+
+{% macro term_list(results, term_var='term', title_properties=[], title_languages=[]) -%}
+  <ul class="term-container">
+  {% for row in results %}
+    <li class="term">
+      <a href="{{ row[term_var] | relative_uri }}">
+        {% set term_local_name = helper.prefix_label(row[term_var]) %}
+        {% if not title_properties %}
+          {{ row[term_var] | title_any(languages=title_languages, default=term_local_name) }}
+        {% else %}
+          {{ row[term_var] | get_text(properties=title_properties, languages=title_languages, default=term_local_name, return_first=True) }}
+        {% endif %}
+      </a>
+    </li>
+  {% endfor %}
+  </ul>
+{%- endmacro %}

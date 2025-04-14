@@ -1,0 +1,55 @@
+{% extends 'berlin.lod.basetheme/base.html.jinja' %}
+
+{% set type_icon = type_icon | default('circle') %} 
+{% set vocab = node | rdf_property_any(RDFS.isDefinedBy) %}
+
+{% block breadcrumbs %}
+  <div class="row breadcrumbs">
+    <div class="col-12">
+      <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            {% if vocab %}
+              {% if resource_prefix != vocab.toPython() %}
+                <li class="breadcrumb-item">
+                    <a href="{{ resource_prefix | relative_uri }}">
+                    {{ dataset_breadcrumb }}
+                    </a>
+                </li>
+              {% endif %}
+              <li class="breadcrumb-item">
+                <a href="{{ vocab | relative_uri }}">
+                  {% set vocab_local_name = helper.prefix_label(vocab) %}
+                  {{ vocab | title_any(['de', 'en'], vocab_local_name) }}
+                </a>
+              </li>
+            {% else %}
+                <li class="breadcrumb-item">
+                    <a href="{{ resource_prefix | relative_uri }}">
+                    {{ dataset_breadcrumb }}
+                    </a>
+                </li>
+            {% endif %}
+            <li class="breadcrumb-item">
+                {{ title }}
+            </li>
+          </ol>
+      </nav>
+    </div>
+  </div>
+{% endblock breadcrumbs %}
+
+
+{% block info_table_content%}
+  {{ super() }}
+  {% if vocab %}
+    <tr>
+      <td>Vokabular:</td>
+      <td>
+        <a href="{{ vocab | relative_uri }}">
+          {% set vocab_local_name = helper.prefix_label(vocab) %}
+          {{ vocab | title_any(['de', 'en'], vocab_local_name) }}
+        </a>
+      </td>
+    </tr>
+  {% endif %}
+{% endblock info_table_content %}

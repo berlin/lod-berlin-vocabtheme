@@ -1,0 +1,42 @@
+{% extends 'berlin.lod.vocabtheme/voc_base.html.jinja' %}
+
+{% set type_icon = type_icon | default('arrow-up-right') %}
+{% set vocab = node | rdf_property_any(RDFS.isDefinedBy) %}
+
+{% block info_table_content%}
+  {{ super() }}
+
+  {% set super_properties = node | rdf_property(RDFS.subPropertyOf) | sort %}
+  {% for property in super_properties %}
+  <tr>
+      <td>Superproperty:</td>
+      <td>{{ helper.prefix_link(property) }}</td>
+  </tr>
+  {% endfor %}
+  
+  {% set sub_properties = node | rdf_inverse_property(RDFS.subPropertyOf) | sort %}
+  {% for property in sub_properties %}
+  <tr>
+      <td>Subproperty:</td>
+      <td>{{ helper.prefix_link(property) }}</td>
+  </tr>
+  {% endfor %}
+  
+  {% set domains = node | rdf_property(RDFS.domain) | sort %}
+  {% for class in domains %}
+  <tr>
+      <td>Domain:</td>
+      <td>{{ helper.prefix_link(class) }}</td>
+  </tr>
+  {% endfor %}
+  
+  {% set ranges = node | rdf_property(RDFS.range) | sort %}
+  {% for class in ranges %}
+  <tr>
+      <td>Range:</td>
+      <td>{{ helper.prefix_link(class) }}</td>
+  </tr>
+  {% endfor %}
+  
+{% endblock info_table_content %}
+
