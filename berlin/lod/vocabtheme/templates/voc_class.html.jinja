@@ -22,6 +22,14 @@
   </tr>
   {% endfor %}
   
+  {% set equivalent_classes = node | rdf_property(OWL.equivalentClass) | sort %}
+  {% for class in equivalent_classes %}
+  <tr>
+      <td>Equivalent Class:</td>
+      <td>{{ helper.prefix_link(class) }}</td>
+  </tr>
+  {% endfor %}
+  
   {% set in_domain = node | rdf_inverse_property(RDFS.domain) | sort %}
   {% for property in in_domain %}
   <tr>

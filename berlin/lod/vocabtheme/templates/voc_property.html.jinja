@@ -38,5 +38,21 @@
   </tr>
   {% endfor %}
   
+  {% set inverse_properties = node | rdf_property(owl:inverseOf) | sort %}
+  {% for property in inverse_properties %}
+  <tr>
+      <td>Inverse of:</td>
+      <td>{{ helper.prefix_link(property) }}</td>
+  </tr>
+  {% endfor %}
+  
+  {% set equivalent_properties = node | rdf_property(owl:equivalentProperty) | sort %}
+  {% for property in equivalent_properties %}
+  <tr>
+      <td>Equivalent Property:</td>
+      <td>{{ helper.prefix_link(property) }}</td>
+  </tr>
+  {% endfor %}
+  
 {% endblock info_table_content %}
 
