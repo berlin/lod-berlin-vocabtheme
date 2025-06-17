@@ -1,9 +1,10 @@
 {% import 'berlin.lod.basetheme/helper.html.jinja' as helper with context %}
 
-{% macro term_list(results, title=none, term_var='term', type_var=none, title_properties=[], title_languages=[]) -%}
+{% macro term_list(results, title=none, description=none, term_var='term', type_var=none, title_properties=[], title_languages=[]) -%}
   {#
     Parameters:
       - title: title for this term list, if any
+      - description: description for this term list, if any
       - results: the query result object from rdflib
       - term_var: the name of the variable used for the term we want to show
       - type_var: the name of the variable used for the type of the term, if any
@@ -11,10 +12,15 @@
       - title_languages: list of language codes to be checked for titles
   #}
   <div class="card">
-    {% if title %}
-      <h2 class="card-header">
-        {{ title }}
-      </h2>
+    {% if title or description %}
+      <div class="card-header">
+        {% if title %}
+          <h2>{{ title }}</h2>
+        {% endif %}
+        {% if description %}
+          <p>{{ description }}</p>
+        {% endif %}
+      </div>
     {% endif %}
     <ul class="term-container list-group list-group-flush">
       {% for row in results %}
