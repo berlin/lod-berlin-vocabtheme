@@ -24,6 +24,80 @@
   </div>
 {% endblock breadcrumbs %}
 
+{% block info_table_content %}
+  {{ super() }}
+
+  {% set date_created = node | rdf_property_any(DCT.created) %}
+  {% if date_created %}
+    <tr>
+      <td>zuerst erstellt am:</td>
+      <td>{{ date_created }}</td>
+    </tr>
+  {% endif %}
+
+  {% set date_modified = node | rdf_property_any(DCT.modified) %}
+  {% if date_modified %}
+    <tr>
+      <td>zuletzt geändert am:</td>
+      <td>{{ date_modified }}</td>
+    </tr>
+  {% endif %}
+
+  {% set publishers = node | rdf_property(DCT.publisher) %}
+  {% for publisher in publishers | sort %}
+    <tr>
+      <td>Veröffentlichende Stelle:</td>
+      <td>
+        <a href="{{ publisher }}">
+          {% set publisher_local_name = helper.prefix_label(publisher) %}
+          {{ publisher | title_any(['de', 'en'], publisher_local_name) }}
+        </a>
+      </td>
+    </tr>
+  {% endfor %}
+
+  {% set homepage = node | rdf_property_any(FOAF.homepage) %}
+  {% if homepage %}
+    <tr>
+      <td>Homepage:</td>
+      <td>
+        <a href="{{ homepage }}">
+          {{ homepage }}
+        </a>
+      </td>
+    </tr>
+  {% endif %}
+
+  {% set versions = node | rdf_property(DCT.hasVersion) %}
+  {% for version in versions | sort %}
+    <tr>
+      <td>Andere Version:</td>
+      <td>{{ helper.prefix_link(version) }}</td>
+    </tr>
+  {% endfor %}
+
+  {% set data_dumps = node| rdf_property(VOID.dataDump) %}
+  {% for data_dump in data_dumps %}
+    <tr>
+      <td>Datensatz-Download:</td>
+      <td>
+        <a href="{{ data_dump }}">{{ data_dump }}</a>
+      </td>
+    </tr>
+  {% endfor %}
+
+  {% set licenses = node | rdf_property(DCT.license) %}
+  {% for license in licenses %}
+    <tr>
+      <td>Lizenz:</td>
+      <td>
+        <a href="{{ license }}">{{ license }}</a>
+      </td>
+    </tr>
+  {% endfor %}
+{% endblock info_table_content %}
+
+
 {% block content%}
 
   {{ super() }}
@@ -42,8 +116,7 @@
     {% set results = node | sparql_query(classes_query) %}
     {% if results %}
         <div class="col-lg-4">
-          <h2>Klassen</h2>
-          {{ voc_helper.term_list(results, 'class', title_languages=['de'])}}
+          {{ voc_helper.term_list(results, title="Klassen", description="Welche Klassen werden in diesem Vokabular definiert?", term_var='class', title_languages=['de'])}}
         </div>
     {% endif %}
   {% endblock class_list%}
@@ -63,8 +136,7 @@
     {% set results = node | sparql_query(properties_query) %}
     {% if results %}
         <div class="col-lg-4">
-          <h2>Properties</h2>
-          {{ voc_helper.term_list(results, 'property', title_languages=['de'])}}
+          {{ voc_helper.term_list(results, title="Properties", description="Welche Properties werden in diesem Vokabular definiert?", term_var='property', title_languages=['de'])}}
         </div>
     {% endif %}
   {% endblock property_list %}
@@ -90,8 +162,7 @@
     {% set results = node | sparql_query(other_query) %}
     {% if results %}
         <div class="col-lg-4">
-          <h2>Andere</h2>
-          {{ voc_helper.term_list(results, title_properties=[SCHEMA.name, SCHEMA.description], title_languages=['de'])}}
+          {{ voc_helper.term_list(results, title="Andere", title_properties=[SCHEMA.name, SCHEMA.description], title_languages=['de'])}}
         </div>
     {% endif %}
   {% endblock other_list %}
