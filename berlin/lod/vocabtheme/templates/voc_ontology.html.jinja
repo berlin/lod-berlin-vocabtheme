@@ -103,71 +103,75 @@
   {{ super() }}
 
   <div class="row">
+    {% block term_lists %}
 
-  {% block class_list %}
-    {% set classes_query = '''
-      SELECT ?class
-      WHERE {
-        ?class rdfs:isDefinedBy ?resource_uri .
-        { ?class a owl:Class . } UNION
-        { ?class a rdfs:Class . }
-      } ORDER BY ?class
-    '''%}
-    {% set results = node | sparql_query(classes_query) %}
-    {% if results %}
-        <div class="col-lg-4">
-          {{ voc_helper.term_list(results, title="Klassen", description="Welche Klassen werden in diesem Vokabular definiert?", term_var='class', title_languages=['de'])}}
-        </div>
-    {% endif %}
-  {% endblock class_list%}
+      {% block class_list %}
+        {% set classes_query = '''
+          SELECT ?class
+          WHERE {
+            ?class rdfs:isDefinedBy ?resource_uri .
+            { ?class a owl:Class . } UNION
+            { ?class a rdfs:Class . }
+          } ORDER BY ?class
+        '''%}
 
-  {% block property_list %}
-    {% set properties_query = '''
-      SELECT ?property
-      WHERE {
-          ?property rdfs:isDefinedBy ?resource_uri .
-          { ?property a rdf:Property . } UNION
-          { ?property a owl:ObjectProperty . } UNION
-          { ?property a owl:AnnotationProperty . } UNION
-          { ?property a owl:DatatypeProperty . }
-      } ORDER BY ?property
-    '''
-    %}
-    {% set results = node | sparql_query(properties_query) %}
-    {% if results %}
-        <div class="col-lg-4">
-          {{ voc_helper.term_list(results, title="Properties", description="Welche Properties werden in diesem Vokabular definiert?", term_var='property', title_languages=['de'])}}
-        </div>
-    {% endif %}
-  {% endblock property_list %}
+        {% set results = node | sparql_query(classes_query) %}
+        {% if results %}
+            <div class="col-lg-4">
+              {{ voc_helper.term_list(results, title="Klassen", description="Welche Klassen werden in diesem Vokabular definiert?", term_var='class', title_languages=['de'])}}
+            </div>
+        {% endif %}
+      {% endblock class_list%}
 
-  {% block other_list %}
-    {% set other_query = '''
-      SELECT ?term ?type
-      WHERE {
-        ?term 
-          a ?type ;
-          rdfs:isDefinedBy ?resource_uri .
-        # the filtering will not work if a term has multiple types,
-        # one of which is not in the list of filtered types
-        FILTER(!sameTerm(?type, owl:Class))
-        FILTER(!sameTerm(?type, rdfs:Class))
-        FILTER(!sameTerm(?type, rdf:Property))
-        FILTER(!sameTerm(?type, owl:ObjectProperty))
-        FILTER(!sameTerm(?type, owl:DatatypeProperty))
-        FILTER(!sameTerm(?type, owl:AnnotationProperty))
-      } ORDER BY ?type ?term
-    '''
-    %}
-    {% set results = node | sparql_query(other_query) %}
-    {% if results %}
-        <div class="col-lg-4">
-          {{ voc_helper.term_list(results, title="Andere", title_properties=[SCHEMA.name, SCHEMA.description], title_languages=['de'])}}
-        </div>
-    {% endif %}
-  {% endblock other_list %}
+      {% block property_list %}
+        {% set properties_query = '''
+          SELECT ?property
+          WHERE {
+              ?property rdfs:isDefinedBy ?resource_uri .
+              { ?property a rdf:Property . } UNION
+              { ?property a owl:ObjectProperty . } UNION
+              { ?property a owl:AnnotationProperty . } UNION
+              { ?property a owl:DatatypeProperty . }
+          } ORDER BY ?property
+        '''
+        %}
+        {% set results = node | sparql_query(properties_query) %}
+        {% if results %}
+            <div class="col-lg-4">
+              {{ voc_helper.term_list(results, title="Properties", description="Welche Properties werden in diesem Vokabular definiert?", term_var='property', title_languages=['de'])}}
+            </div>
+        {% endif %}
+      {% endblock property_list %}
 
+      {% block other_list %}
+        {% set other_query = '''
+          SELECT ?term ?type
+          WHERE {
+            ?term 
+              a ?type ;
+              rdfs:isDefinedBy ?resource_uri .
+            # the filtering will not work if a term has multiple types,
+            # one of which is not in the list of filtered types
+            FILTER(!sameTerm(?type, owl:Class))
+            FILTER(!sameTerm(?type, rdfs:Class))
+            FILTER(!sameTerm(?type, rdf:Property))
+            FILTER(!sameTerm(?type, owl:ObjectProperty))
+            FILTER(!sameTerm(?type, owl:DatatypeProperty))
+            FILTER(!sameTerm(?type, owl:AnnotationProperty))
+          } ORDER BY ?type ?term
+        '''
+        %}
+        {% set results = node | sparql_query(other_query) %}
+        {% if results %}
+            <div class="col-lg-4">
+              {{ voc_helper.term_list(results, title="Andere", title_properties=[SCHEMA.name, SCHEMA.description], title_languages=['de'])}}
+            </div>
+        {% endif %}
+      {% endblock other_list %}
+
+    {% endblock term_lists %}
   </div>
+
 
 {% endblock content %}
 
