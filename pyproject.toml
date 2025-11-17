@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lod-berlin-vocabtheme"
-version = "0.0.3"
+version = "0.0.4"
 description = "Jinja templates for RDF vocabularies or ontologies"
 authors = [{ name = "Knud Möller", email = "knud.moeller@berlinonline.de" }]
 license = { file = "LICENSE" }

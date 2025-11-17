@@ -109,7 +109,7 @@
         {% set classes_query = '''
           SELECT ?class
           WHERE {
-            ?class rdfs:isDefinedBy ?resource_uri .
+            ?class rdfs:isDefinedBy ?resourceUri .
             { ?class a owl:Class . } UNION
             { ?class a rdfs:Class . }
           } ORDER BY ?class
@@ -127,7 +127,7 @@
         {% set properties_query = '''
           SELECT ?property
           WHERE {
-              ?property rdfs:isDefinedBy ?resource_uri .
+              ?property rdfs:isDefinedBy ?resourceUri .
               { ?property a rdf:Property . } UNION
               { ?property a owl:ObjectProperty . } UNION
               { ?property a owl:AnnotationProperty . } UNION
@@ -149,7 +149,7 @@
           WHERE {
             ?term 
               a ?type ;
-              rdfs:isDefinedBy ?resource_uri .
+              rdfs:isDefinedBy ?resourceUri .
             # the filtering will not work if a term has multiple types,
             # one of which is not in the list of filtered types
             FILTER(!sameTerm(?type, owl:Class))
