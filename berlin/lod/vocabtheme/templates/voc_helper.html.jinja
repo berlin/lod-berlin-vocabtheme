@@ -28,11 +28,13 @@
           <a href="{{ row[term_var] | relative_uri }}">
             {% set term_local_name = helper.prefix_label(row[term_var]) %}
             {% if not title_properties %}
-              {{ row[term_var] | title_any(languages=title_languages, default=term_local_name) }}
+              {% set term_title = row[term_var] | title_any(languages=title_languages) %}
             {% else %}
-              {{ row[term_var] | get_text(properties=title_properties, languages=title_languages, default=term_local_name, return_first=True) }}
+              {% set term_title = row[term_var] | get_text(properties=title_properties, languages=title_languages, return_first=True) %}
             {% endif %}
+            {{ term_local_name }}
           </a>
+          {% if term_title %} ({{ term_title }}){% endif %}
           {% if type_var %}
             ({{ helper.prefix_link(row[type_var]) }})
           {% endif %}
