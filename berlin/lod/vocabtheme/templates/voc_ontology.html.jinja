@@ -43,6 +43,18 @@
     </tr>
   {% endif %}
 
+  {% set changelog = node | rdf_property_any(BLNAL.changelog) %}
+  {% if changelog %}
+    <tr>
+      <td>Changelog:</td>
+      <td>
+        <a href="{{ changelog }}">
+          {{ changelog }}
+        </a>
+      </td>
+    </tr>
+  {% endif %}
+
   {% set publishers = node | rdf_property(DCT.publisher) %}
   {% for publisher in publishers | sort %}
     <tr>
